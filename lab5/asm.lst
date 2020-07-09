@@ -1,0 +1,128 @@
+Microsoft (R) Macro Assembler Version 6.14.8444		    05/31/20 18:42:16
+C:\Users\lera\Documents\Visual Studio 2017\Projects\lab5\asm.asm  Page 1 - 1
+
+
+								.586
+								.model flat
+ 00000000							.code
+								public _ADD1
+								externdef _PR:near	;подпрограмма на C++
+ 00000000			_ADD1 proc
+ 00000000  55							push EBP
+ 00000001  8B EC						mov  EBP,ESP
+ 00000003  56							push ESI
+ 00000004  57							push EDI
+ 00000005  50							push EAX
+ 00000006  53							push EBX
+ 00000007  52							push EDX
+ 00000008  33 D2						xor  EDX,EDX
+ 0000000A  8B 7D 08					    mov  EDI,[EBP+8]	;записываю адрес строки Str1
+ 0000000D  8B 75 0C				        mov  ESI,[EBP+12]	;записываю n
+								
+ 00000010  FC							cld
+ 00000011  8B D6						mov EDX, ESI ; максимум
+
+ 00000013							cycle1:
+ 00000013  03 FE							add EDI, ESI	; ставлю указатель на n-ый символ
+ 00000015  B0 00							mov AL, 0		; пока не достигнут конец строки
+ 00000017  AE								scasb
+ 00000018  74 19						    je continue		; если конец строки
+ 0000001A  8B DE						    mov EBX, ESI	; количество символов в строке = n
+ 0000001C  4F								dec EDI			; возвращаюсь к текущему символу
+ 0000001D  B0 20							mov AL, ' '
+ 0000001F								cycle2:
+ 0000001F  AE									scasb		; проверяю символ на пробел
+ 00000020  74 03								je next_str ; переход по равно
+ 00000022  43									inc EBX		; увеличиваю максимум
+ 00000023  EB FA							jmp cycle2
+				         
+ 00000025							    next_str:
+ 00000025  3B D3							cmp EDX, EBX	; сравниваю с максимумом 
+ 00000027  7D 02							jge mx			; переход по больше или равно
+ 00000029  8B D3							mov EDX, EBX	; назначаю новый максимум
+ 0000002B								mx: 
+ 0000002B  4F								dec EDI			;возращаюсь к текущему символу
+ 0000002C  B0 0A							mov AL, 10
+ 0000002E  88 07							mov [EDI], AL	; меняю пробел на символ новой строки
+ 00000030  47								inc EDI			; перехожу к следующему символу
+ 00000031  EB E0					    jmp cycle1
+				         
+ 00000033							continue:			; преобразования строки для дальнешней работы
+ 00000033  B0 00						mov AL, 0
+ 00000035							cyc:
+ 00000035  4F						    dec EDI
+ 00000036  38 07						cmp [EDI], AL
+ 00000038  74 FB						je cyc
+ 0000003A  B0 20						mov AL, ' '
+ 0000003C  38 07						cmp [EDI], AL
+ 0000003E  74 01						je next
+ 00000040  47							inc EDI
+ 00000041							next:
+ 00000041  B0 0A						mov AL, 10
+ 00000043  88 07						mov [EDI], AL
+ 00000045  47							inc EDI
+ 00000046  B0 00						mov AL, 0
+ 00000048  88 07						mov [EDI],AL
+
+ 0000004A  8B 75 08						mov ESI, [EBP+8] ; записываю адрес строки в ESI
+ 0000004D  52							push EDX		  ; записываю максимум в стек
+ 0000004E  56							push ESI		  ; записываю адрес строки в стек
+ 0000004F  E8 00000000 E					call _PR	  ; вызов процедуры	
+ 00000054  5E							pop ESI
+ 00000055  5A							pop EDX
+
+ 00000056  5A							pop  EDX
+ 00000057  5B							pop  EBX
+ 00000058  58							pop  EAX
+ 00000059  5F							pop  EDI
+ 0000005A  5E							pop  ESI
+ 0000005B  5D							pop  EBP
+ 0000005C  C3							ret
+ 0000005D			_ADD1 endp
+					  end
+Microsoft (R) Macro Assembler Version 6.14.8444		    05/31/20 18:42:16
+C:\Users\lera\Documents\Visual Studio 2017\Projects\lab5\asm.asm  Symbols 2 - 1
+
+
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+FLAT . . . . . . . . . . . . . .	GROUP
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000000 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000005D Para	  Public  'CODE'	
+
+
+Procedures,  parameters and locals:
+
+                N a m e                 Type     Value    Attr
+
+_ADD1  . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000005D Public
+  cycle1 . . . . . . . . . . . .	L Near	 00000013 _TEXT	
+  cycle2 . . . . . . . . . . . .	L Near	 0000001F _TEXT	
+  next_str . . . . . . . . . . .	L Near	 00000025 _TEXT	
+  mx . . . . . . . . . . . . . .	L Near	 0000002B _TEXT	
+  continue . . . . . . . . . . .	L Near	 00000033 _TEXT	
+  cyc  . . . . . . . . . . . . .	L Near	 00000035 _TEXT	
+  next . . . . . . . . . . . . .	L Near	 00000041 _TEXT	
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+@CodeSize  . . . . . . . . . . .	Number	 00000000h   
+@DataSize  . . . . . . . . . . .	Number	 00000000h   
+@Interface . . . . . . . . . . .	Number	 00000000h   
+@Model . . . . . . . . . . . . .	Number	 00000007h   
+@code  . . . . . . . . . . . . .	Text   	 _TEXT
+@data  . . . . . . . . . . . . .	Text   	 FLAT
+@fardata?  . . . . . . . . . . .	Text   	 FLAT
+@fardata . . . . . . . . . . . .	Text   	 FLAT
+@stack . . . . . . . . . . . . .	Text   	 FLAT
+_PR  . . . . . . . . . . . . . .	L Near	 00000000 FLAT	External
+
+	   0 Warnings
+	   0 Errors
